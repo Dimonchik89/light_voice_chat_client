@@ -6,7 +6,7 @@ const socket = io(import.meta.env.VITE_BASE_URL);
 const VoiceChat = () => {
   const [room, setRoom] = useState('');
 
-  const mediaRecorderRef = useRef(null);
+  const audioRef = useRef(null);
 
   // useEffect(() => {
   //   const startAudioCapture = async () => {
@@ -91,6 +91,12 @@ const VoiceChat = () => {
         socket.emit('audio', {audioData, room});
       };
 
+      audioRef.current = {
+        processor,
+        source,
+        audioContext
+      }
+
       return () => {
         processor.disconnect();
         source.disconnect();
@@ -103,8 +109,10 @@ const VoiceChat = () => {
 
   useEffect(() => {
     return () => {
-      if(mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop()
+      if(audioRef.current) {
+        audioRef.current.processor.disconnect();
+        audioRef.current.source.disconnect();
+        audioRef.current.audioContext.close();
       }
     }
   }, [])
@@ -141,7 +149,9 @@ const VoiceChat = () => {
   const leaveRoom = () => {
     socket.emit("leaveRoom", room);
     setRoom("")
-    mediaRecorderRef.current.stop();
+    audioRef.current.processor.disconnect();
+    audioRef.current.source.disconnect();
+    audioRef.current.audioContext.close();
     socket.off('audio', handleAudio);
   }
 
