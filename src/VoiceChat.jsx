@@ -55,7 +55,7 @@ const VoiceChat = () => {
   const startAudioCapture = () => {
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     .then((stream) => {
-        let mediaRecorder = new MediaRecorder(stream);
+        const mediaRecorder = new MediaRecorder(stream);
         let audioChunks = [];
 
         mediaRecorder.addEventListener("dataavailable", function (event) {
@@ -63,12 +63,12 @@ const VoiceChat = () => {
         });
 
         mediaRecorder.addEventListener("stop", function () {
-            let audioBlob = new Blob(audioChunks);
+            const audioBlob = new Blob(audioChunks);
             audioChunks = [];
-            let fileReader = new FileReader();
+            const fileReader = new FileReader();
             fileReader.readAsDataURL(audioBlob);
             fileReader.onloadend = function () {
-                var base64String = fileReader.result;
+                let base64String = fileReader.result;
                 socket.emit("audio", {audioData: base64String, room});
             };
 
@@ -79,13 +79,13 @@ const VoiceChat = () => {
             mediaRecorder.start();
             setTimeout(function () {
                 mediaRecorder.stop();
-            }, 1000);
+            }, 300);
         });
 
         mediaRecorder.start();
         setTimeout(function () {
             mediaRecorder.stop();
-        }, 1000);
+        }, 300);
     })
     .catch((error) => {
         console.error('Error capturing audio.', error);
