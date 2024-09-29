@@ -79,13 +79,13 @@ const VoiceChat = () => {
             mediaRecorder.start();
             setTimeout(function () {
                 mediaRecorder.stop();
-            }, 300);
+            }, 1000);
         });
 
         mediaRecorder.start();
         setTimeout(function () {
             mediaRecorder.stop();
-        }, 300);
+        }, 1000);
     })
     .catch((error) => {
         console.error('Error capturing audio.', error);
